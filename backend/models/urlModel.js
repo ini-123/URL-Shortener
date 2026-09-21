@@ -3,11 +3,13 @@ const mongose = require('mongoose');
 const urlSchema = new mongose.Schema({
     originalUrl: {
         type: String,
-        required: true
+        required: true,
+        trim : true
     },
     shortUrl: {
         type: String,
-        required: true
+        required: true,
+        trim : true
     }, 
     clicks : {
         type: Number,

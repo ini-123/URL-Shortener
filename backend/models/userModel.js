@@ -3,37 +3,53 @@ const mongose = requre('mongoose');
 const UserSchema = new mongose.Schema({
     firstName: {
         type: String,
-        required: true
+        required: true,
+        trim : true
     }, 
 
     lastName: {
         type: String,
-        required: true 
+        required: true,
+        trim : true 
     }, 
 
     email :  {
         type: String,
-        required: true
+        required: true,
+        unique : true,
+        lowercase : true, 
+        trim : true
     }, 
 
-    numberPhone : {
+    phoneNumber : {
         type: String,
-        required: true
+        required: true,
+        unique : true
     }, 
-    // Hashpassword for securit
+    // Hashpassword for security
     password : {
         type: String,
-        required: true
+        required: true,
+        trim : true
     },
 
     role : {
+        type : String,
         enum : ['user', 'admin'],
-        required : true
+        required : true,
+        default : user
     },
     // Important for user account is active or not
     isActive : {
         type : Boolean,
-        required : true
+        required : true,
+        default : false
+    },
+    resetPasswordToken : {
+        type : String
+    },
+    resetPasswordExpires : {
+        type : Date
     }
 }, {
     timestamps : true
