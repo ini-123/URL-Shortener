@@ -1,6 +1,6 @@
-const mongose = require('mongoose');
+const mongoose = require('mongoose');
 
-const urlSchema = new mongose.Schema({
+const urlSchema = new mongoose.Schema({
     originalUrl: {
         type: String,
         required: true,
@@ -24,4 +24,4 @@ const urlSchema = new mongose.Schema({
     timestamps : true
 });
 
-module.exports = mongose.model('Url', urlSchema);
+module.exports = mongoose.model('Url', urlSchema);
