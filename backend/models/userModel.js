@@ -1,4 +1,4 @@
-const mongose = requre('mongoose');
+const mongose = require('mongoose');
 
 const UserSchema = new mongose.Schema({
     firstName: {
@@ -37,13 +37,13 @@ const UserSchema = new mongose.Schema({
         type : String,
         enum : ['user', 'admin'],
         required : true,
-        default : user
+        default : 'user'  
     },
     // Important for user account is active or not
     isActive : {
         type : Boolean,
         required : true,
-        default : false
+        default : true
     },
     resetPasswordToken : {
         type : String

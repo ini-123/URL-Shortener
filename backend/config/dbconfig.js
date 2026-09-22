@@ -1,4 +1,4 @@
-const mongose = require('mongoose'); 
+const mongoose = require('mongoose'); 
 const dotenv = require('dotenv'); 
 
 // Load environnemennal variables
@@ -8,8 +8,8 @@ const connectDB = async() => {
 
     try {
         // Connexion with database in sucess
-        const conn = mongose.connect(process.env.MONGO_URI); 
-        console.log(`MongoDB connected : ${conn.connexion.host}`);
+        const conn = await mongoose.connect(process.env.MONGO_URI); 
+        console.log(`MongoDB connected : ${conn.connection.host}`);
 
     } catch (error) {
         // Error connexion with database

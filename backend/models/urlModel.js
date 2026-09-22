@@ -17,7 +17,8 @@ const urlSchema = new mongose.Schema({
     }, 
     isActive : {
         type : Boolean,
-        required : true
+        required : true,
+        default : true
     }
 }, {
     timestamps : true
