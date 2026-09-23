@@ -15,6 +15,22 @@ const urlSchema = new mongose.Schema({
         type: Number,
         default: 0
     }, 
+    clickHistory : [
+        {
+            clickedAt : {
+                type : Date, 
+                default : Date.now
+            },
+            userAgent : {
+                type : String,
+                trim : true
+            },
+            referrer : {
+                type : String,
+                trim : true
+            }
+        }
+    ],
     isActive : {
         type : Boolean,
         required : true
