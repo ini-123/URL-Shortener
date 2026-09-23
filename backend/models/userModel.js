@@ -1,6 +1,6 @@
-const mongose = requre('mongoose');
+const mongoose = require('mongoose');
 
-const UserSchema = new mongose.Schema({
+const UserSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,
@@ -37,13 +37,13 @@ const UserSchema = new mongose.Schema({
         type : String,
         enum : ['user', 'admin'],
         required : true,
-        default : user
+        default : 'user'  
     },
     // Important for user account is active or not
     isActive : {
         type : Boolean,
         required : true,
-        default : false
+        default : true
     },
     resetPasswordToken : {
         type : String
@@ -55,4 +55,4 @@ const UserSchema = new mongose.Schema({
     timestamps : true
 });
 
-module.exports = mongose.model('User', UserSchema);
+module.exports = mongoose.model('User', UserSchema);
