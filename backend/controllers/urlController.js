@@ -6,6 +6,7 @@ const {
   getUrlStats,
   deleteUrl,
 } = require('../services/urlService');
+const { successResponse, errorResponse } = require('../utils/response');
 
 const createUrl = async (req, res) => {
   try {
@@ -14,19 +15,16 @@ const createUrl = async (req, res) => {
 
     const newUrl = await createShortUrl(originalUrl, userId);
 
-    return res.status(201).json({
-      success: true,
-      message: 'Short URL created successfully',
-      data: {
-        originalUrl: newUrl.originalUrl,
-        shortCode: newUrl.shortCode,
-      },
+    return successResponse(res, 201, 'Short URL created successfully', {
+      originalUrl: newUrl.originalUrl,
+      shortCode: newUrl.shortCode,
     });
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message || 'Failed to create short URL',
-    });
+    return errorResponse(
+      res,
+      400,
+      error.message || 'Failed to create short URL',
+    );
   }
 };
 
@@ -35,16 +33,9 @@ const getMyUrls = async (req, res) => {
     const userId = req.user.id;
     const urls = await getUserUrls(userId);
 
-    return res.status(200).json({
-      success: true,
-      message: 'URLs retrieved successfully',
-      data: urls,
-    });
+    return successResponse(res, 200, 'URLs retrieved successfully', urls);
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to retrieve URLs',
-    });
+    return errorResponse(res, 500, error.message || 'Failed to retrieve URLs');
   }
 };
 
@@ -58,10 +49,7 @@ const redirectToOriginal = async (req, res) => {
 
     return res.redirect(url.originalUrl);
   } catch (error) {
-    return res.status(404).json({
-      success: false,
-      message: error.message || 'URL not found',
-    });
+    return errorResponse(res, 404, error.message || 'URL not found');
   }
 };
 
@@ -72,16 +60,18 @@ const getStats = async (req, res) => {
 
     const stats = await getUrlStats(shortCode, userId);
 
-    return res.status(200).json({
-      success: true,
-      message: 'URL statistics retrieved successfully',
-      data: stats,
-    });
+    return successResponse(
+      res,
+      200,
+      'URL statistics retrieved successfully',
+      stats,
+    );
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message || 'Failed to retrieve statistics',
-    });
+    return errorResponse(
+      res,
+      400,
+      error.message || 'Failed to retrieve statistics',
+    );
   }
 };
 
@@ -92,15 +82,9 @@ const removeUrl = async (req, res) => {
 
     await deleteUrl(shortCode, userId);
 
-    return res.status(200).json({
-      success: true,
-      message: 'URL deleted successfully',
-    });
+    return successResponse(res, 200, 'URL deleted successfully');
   } catch (error) {
-    return res.status(400).json({
-      success: false,
-      message: error.message || 'Failed to delete URL',
-    });
+    return errorResponse(res, 400, error.message || 'Failed to delete URL');
   }
 };
 
