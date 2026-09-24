@@ -8,6 +8,7 @@ const {
     resetPasswordValidation} = require('../validations/authValidation');
 const authMiddleware = require('../middlewares/authMiddleware');
 
+// User routes
 router.post('/register', registerValidation, authController.register);
 router.post('/login', loginValidation, authController.login);
 router.post('/forgot-password', forgotPasswordValidation, authController.forgotPassword);

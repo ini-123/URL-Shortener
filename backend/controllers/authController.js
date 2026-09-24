@@ -2,7 +2,8 @@ const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const {validationResult} = require('express-validator');
+const { validationResult } = require('express-validator');
+const { successResponse, errorResponse } = require('../utils/response');
 
 // Registers a new user
 exports.register = async (req, res) => {
@@ -12,9 +13,7 @@ exports.register = async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            return errorResponse(res, 400, errors.array());
         }
 
         // Get registration details from the request
@@ -30,9 +29,13 @@ exports.register = async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            return res.status(409).json({
-                message: 'Email is already registered'
-            });
+            return errorResponse(res, 409, 'Email is already registered');
+        }
+
+        const existingPhone = await User.findOne({ phoneNumber });
+
+        if (existingPhone) {
+            return errorResponse(res, 409, 'Phone number is already registered');
         }
 
         // Hash the password before saving it
@@ -48,9 +51,8 @@ exports.register = async (req, res) => {
         });
 
         // Return the user's information
-        res.status(201).json({
-            message: 'Registration successful',
-            user: {
+        return successResponse( res, 201, 'Registration successful',
+            {
                 id: user._id,
                 firstName: user.firstName,
                 lastName: user.lastName,
@@ -59,15 +61,13 @@ exports.register = async (req, res) => {
                 role: user.role,
                 isActive: user.isActive
             }
-        });
+        );
 
     } catch (error) {
-        res.status(500).json({
-            message: 'Registration failed',
-            error: error.message
-        });
+    return errorResponse(res, 500, 'Registration failed');
     }
 };
+
 
 // Logs an existing user in
 exports.login = async (req, res) => {
@@ -77,28 +77,22 @@ exports.login = async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            return errorResponse(res, 400, errors.array());
         }
 
         // Get login details from the request
         const { email, password } = req.body;
 
         // Find the user using their email
-        const user = await User.findOne({email});
+        const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(401).json({
-                message: 'Invalid email or password'
-            });
+            return errorResponse(res, 401, 'Invalid email or password');
         }
 
         // Check if the user's account is active
         if (!user.isActive) {
-            return res.status(403).json({
-                message: 'Your account is inactive'
-            });
+            return errorResponse(res, 403, 'Your account is inactive');
         }
 
         // Compare the entered password with the stored hashed password
@@ -108,9 +102,7 @@ exports.login = async (req, res) => {
         );
 
         if (!passwordMatch) {
-            return res.status(401).json({
-                message: 'Invalid email or password'
-            });
+            return errorResponse(res, 401, 'Invalid email or password');
         }
 
         // Create a JWT token after successful login
@@ -126,26 +118,25 @@ exports.login = async (req, res) => {
         );
 
         // Return the token and user's information
-        res.status(200).json({
-            message: 'Login successful',
-            token,
-            user: {
-                id: user._id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                phoneNumber: user.phoneNumber,
-                role: user.role
+        return successResponse(res, 200, 'Login successful',
+            {
+                token,
+                user: {
+                    id: user._id,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    phoneNumber: user.phoneNumber,
+                    role: user.role
+                }
             }
-        });
+        );
 
     } catch (error) {
-        res.status(500).json({
-            message: 'Login failed',
-            error: error.message
-        });
+        return errorResponse(res, 500, 'Login failed');
     }
 };
+
 
 // Creates a temporary password reset token
 exports.forgotPassword = async (req, res) => {
@@ -155,22 +146,18 @@ exports.forgotPassword = async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            return errorResponse(res, 400, errors.array());
         }
 
         // Get the user's email
         const { email } = req.body;
 
         // Find the user by email
-        const user = await User.findOne({email});
+        const user = await User.findOne({ email });
 
         // Use the same response whether the email exists or not
         if (!user) {
-            return res.status(200).json({
-                message: 'If an account exists with this email, a password reset link will be sent'
-            });
+            return successResponse(res, 200, 'If an account exists with this email, a password reset link will be sent');
         }
 
         // Generate a random reset token
@@ -199,16 +186,13 @@ exports.forgotPassword = async (req, res) => {
         // This will later be replaced with an email service
         console.log('Password reset link:', resetLink);
 
-        res.status(200).json({
-            message: 'If an account exists with this email, a password reset link will be sent'
-        });
+        return successResponse(res, 200, 'If an account exists with this email, a password reset link will be sent');
 
     } catch (error) {
-        res.status(500).json({
-            message: 'Unable to process password reset'
-        });
+        return errorResponse( res, 500, 'Unable to process password reset');
     }
 };
+
 
 // Resets the user's password
 exports.resetPassword = async (req, res) => {
@@ -218,9 +202,7 @@ exports.resetPassword = async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.status(400).json({
-                errors: errors.array()
-            });
+            return errorResponse(res, 400, errors.array());
         }
 
         // Get the reset token from the URL
@@ -244,26 +226,22 @@ exports.resetPassword = async (req, res) => {
         });
 
         if (!user) {
-            return res.status(400).json({
-                message: 'Reset token is invalid or has expired'
-            });
+            return errorResponse(res, 400, 'Reset token is invalid or has expired' );
         }
 
         // Hash the new password before saving it
         user.password = await bcrypt.hash(password, 10);
+
         // Remove the reset token so it cannot be reused
         user.resetPasswordToken = undefined;
         user.resetPasswordExpires = undefined;
 
         // Save the new password
         await user.save();
-        res.status(200).json({
-            message: 'Password reset successful'
-        });
+
+        return successResponse(res, 200, 'Password reset successful');
 
     } catch (error) {
-        res.status(500).json({
-            message: 'Password reset failed'
-        });
+        return errorResponse(res, 500, 'Password reset failed');
     }
 };
