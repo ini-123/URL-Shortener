@@ -94,11 +94,11 @@ function Login() {
                                      className="text-sm font-medium">
                                       Password
                                     </label>
-                                  <button
-                                      type="button"
+                                  <Link
+                                      to="/forgot-password"
                                       className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400">
                                       Forgot password?
-                                    </button>
+                                    </Link>
                                 </div>
                                 <input
                                   id="password"
