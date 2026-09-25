@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 const ThemeContext = createContext()
 export function ThemeProvider({ children }) {
@@ -8,15 +9,25 @@ export function ThemeProvider({ children }) {
     useEffect(() => {
         const root = document.documentElement
         root.classList.remove( 'light', 'dark')
-        if (theme === 'system') {
-            const prefersDark = 
-            typeof window.matchMedia === 'function' &&
-            window.matchMedia('( prefers-color-scheme: dark)').matches
+        const mediaQuery = typeof window.matchMedia === 'function'
+            ? window.matchMedia('(prefers-color-scheme: dark)')
+            : null
 
-            root.classList.add(prefersDark ? 'dark' : 'light')
-        } else { root.classList.add(theme)}
+        function applySystemTheme() {
+            root.classList.remove('light', 'dark')
+            root.classList.add(mediaQuery?.matches ? 'dark' : 'light')
+        }
+
+        if (theme === 'system') {
+            applySystemTheme()
+            mediaQuery?.addEventListener?.('change', applySystemTheme)
+        } else {
+            root.classList.add(theme)
+        }
 
         localStorage.setItem('theme', theme)
+
+        return () => mediaQuery?.removeEventListener?.('change', applySystemTheme)
     }, [theme])
 
     return (

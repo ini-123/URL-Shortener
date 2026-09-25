@@ -1,7 +1,37 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Link as LinkIcon } from 'lucide-react'
+import { useAuth } from '../Context/useAuth'
 
 function Register() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { register } = useAuth()
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  async function handleSubmit(event) {
+    event.preventDefault()
+    setError('')
+
+    const formData = new FormData(event.currentTarget)
+    if (formData.get('password') !== formData.get('confirmPassword')) {
+      setError('Passwords do not match.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      await register(formData.get('name'), formData.get('email'), formData.get('password'))
+         navigate(location.state?.from?.pathname || '/dashboard', { replace: true })
+    } catch (submitError) {
+      setError(submitError.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
    return (
      <div className="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-white">
          <div className="flex min-h-screen">
@@ -42,7 +72,7 @@ function Register() {
                           <h2 className="text-3xl font-bold">Create your account</h2>
                           <p className="mt-2 text-zinc-600 dark:text-zinc-400">Join Linkly and start creating shorter links.</p>
                       </div>
-                      <form className="space-y-5">
+                      <form className="space-y-5" onSubmit={handleSubmit}>
                            {/* Name */}
                            <div>
                               <label
@@ -52,6 +82,7 @@ function Register() {
                                </label>
                                <input
                                    id="name"
+                                   name="name"
                                    type="text"
                                    placeholder="Your full name"
                                    className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
@@ -67,6 +98,7 @@ function Register() {
                               </label>
                               <input
                                   id="email"
+                                  name="email"
                                   type="email"
                                   placeholder="you@example.com"
                                   className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
@@ -82,6 +114,7 @@ function Register() {
                               </label>
                               <input
                                   id="password"
+                                  name="password"
                                   type="password"
                                   placeholder="Create a password"
                                   className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
@@ -97,15 +130,18 @@ function Register() {
                               </label>
                                <input
                                  id="confirmPassword"
+                                 name="confirmPassword"
                                  type="password"
                                  placeholder="Confirm your password"
                                  className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                                />
                            </div>
+                           {error && <p className="text-sm text-red-600 dark:text-red-400" role="alert">{error}</p>}
                            <button
                              type="submit"
+                             disabled={isSubmitting}
                              className="w-full rounded-lg bg-purple-600 px-5 py-3 font-semibold text-white transition hover:bg-purple-700">
-                               Create account
+                               {isSubmitting ? 'Creating account...' : 'Create account'}
                           </button>
                        </form>
                        <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">

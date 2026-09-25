@@ -1,6 +1,16 @@
+import { useState } from 'react'
 import { Copy, ExternalLink, Trash2 } from 'lucide-react'
 
-function UrlCard({ url }) {
+function UrlCard({ url, onDelete }) {
+    const [copied, setCopied] = useState(false)
+    const shortUrl = url.shortUrl.startsWith('http') ? url.shortUrl : `https://${url.shortUrl}`
+
+    async function handleCopy() {
+        await navigator.clipboard.writeText(shortUrl)
+        setCopied(true)
+        window.setTimeout(() => setCopied(false), 1500)
+    }
+
     return (
        <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -10,9 +20,12 @@ function UrlCard({ url }) {
                </div>
                <div className="flex shrink-0 items-center gap-2">
                    <button 
+                             type="button"
+                             onClick={handleCopy}
                       className="rounded-lg border border-zinc-200 p-2 text-zinc-600 transition hover:border-purple-500 hover:text-purple-600 
                       dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-purple-400"
-                      title="Copy link"> <Copy size={18} />
+                             title="Copy link"
+                             aria-label="Copy shortened link"> {copied ? 'Copied' : <Copy size={18} />}
                    </button>
                     <a
                        href={url.originalUrl}
@@ -23,9 +36,12 @@ function UrlCard({ url }) {
                        title="Open original link"> <ExternalLink size={18} />
                    </a>
                    <button
+                       type="button"
+                       onClick={() => onDelete?.(url.id)}
                        className="rounded-lg border border-zinc-200 p-2 text-zinc-600 transition hover:border-red-500 hover:text-red-500 
                        dark:border-zinc-700 dark:text-zinc-400 dark:hover:text-red-400"
-                       title="Delete link"> <Trash2 size={18} />
+                       title="Delete link"
+                       aria-label="Delete shortened link"> <Trash2 size={18} />
                   </button>
                </div>
            </div>

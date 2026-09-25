@@ -1,7 +1,17 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {BarChart3, Home, Link as LinkIcon, Settings, LogOut, X,} from 'lucide-react'
+import { useAuth } from '../Context/useAuth'
 
 function Sidebar({ isOpen, onClose }) {
+    const navigate = useNavigate()
+    const { logout } = useAuth()
+
+    function handleLogout() {
+        logout()
+        onClose?.()
+        navigate('/login', { replace: true })
+    }
+
     const navItems = [
         {
          name: 'Dashboard',
@@ -30,7 +40,7 @@ function Sidebar({ isOpen, onClose }) {
                 />
             )}
            <aside
-                className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-zinc-200 bg-white transition-transform duration-300 dark:border-zinc-800 dark:bg-zinc-950 ${
+                className={`fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-zinc-200 bg-white transition-transform duration-300 dark:border-slate-800 dark:bg-[#0b1b30] ${
                    isOpen ? 'translate-x-0' : '-translate-x-full'
                 } lg:translate-x-0`} >
                 {/* Logo */}
@@ -69,7 +79,10 @@ function Sidebar({ isOpen, onClose }) {
 
                {/* Bottom */}
                <div className="border-t border-zinc-200 p-4 dark:border-zinc-800">
-                  <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-red-500 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-red-400">
+                        <button
+                            type="button"
+                            onClick={handleLogout}
+                            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-red-500 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-red-400">
                      <LogOut size={20} />
                       Log out
                   </button>

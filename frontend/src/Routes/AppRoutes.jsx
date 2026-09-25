@@ -1,32 +1,14 @@
 import { Routes, Route } from 'react-router-dom'
-import Navbar from '../components/Navbar'
+import Home from '../pages/Home'
 import Login from '../pages/Login'
 import Register from '../pages/Register'
 import Dashboard from '../pages/Dashboard'
-
-
-function Home() {
-    return (
-        <div className="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-white">
-            <Navbar />
-
-            <main className="flex min-h-[calc(100vh-73px)] items-center justify-center px-6">
-                <div className="text-center">
-                    <p className="mb-3 text-sm font-semibold uppercase tracking-widest text-purple-600 dark:text-purple-400">
-                        Welcome to
-                    </p>
-                    <h1 className="text-5xl font-bold tracking-tight sm:text-6xl">
-                       Linkly
-                    </h1>
-                    <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-zinc-600 dark:text-zinc-400">
-                        Create short, simple links and keep track of how they perform.
-                    </p>
-                </div>
-            </main>
-        
-        </div>
-    )
-}
+import Statistics from '../pages/Statistics'
+import Settings from '../pages/Settings'
+import ProtectedRoute from '../components/ProtectedRoute'
+import AdminDasboard from '../pages/admin/AdminDasboard'
+import AllUrls from '../pages/admin/AllUrls'
+import Users from '../pages/admin/Users'
 
 function AppRoutes() {
     return (
@@ -34,7 +16,54 @@ function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/statistics"
+                element={
+                    <ProtectedRoute>
+                        <Statistics />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/settings"
+                element={
+                    <ProtectedRoute>
+                        <Settings />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin"
+                element={
+                    <ProtectedRoute>
+                        <AdminDasboard />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/urls"
+                element={
+                    <ProtectedRoute>
+                        <AllUrls />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/users"
+                element={
+                    <ProtectedRoute>
+                        <Users />
+                    </ProtectedRoute>
+                }
+            />
         </Routes>
     )
 }
