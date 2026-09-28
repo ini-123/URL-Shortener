@@ -5,7 +5,7 @@ const {
   recordClick,
   getUrlStats,
   deleteUrl,
-} = require('../services/urlService');
+} = require('../services/urlServices');
 const { successResponse, errorResponse } = require('../utils/response');
 
 const createUrl = async (req, res) => {
