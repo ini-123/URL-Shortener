@@ -4,6 +4,7 @@ dotenv.config();
 
 const express = require('express');
 const connectDB = require('./config/db');
+const cors = require('cors')
 const authRoutes = require('./routes/authRoutes');
 const { rateLimiter } = require('./middlewares/rateLimiter');
 const { errorHandler } = require('./middlewares/errorMiddleware');
@@ -13,6 +14,7 @@ const { redirectToOriginal } = require('./controllers/urlController');
 const app = express();
 
 // Allows the server to receive JSON data
+app.use(cors());
 app.use(express.json());
 app.use(rateLimiter);
 
