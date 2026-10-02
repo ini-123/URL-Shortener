@@ -11,6 +11,7 @@ const { successResponse, errorResponse } = require('../utils/response');
 const createUrl = async (req, res) => {
   try {
     const { originalUrl } = req.body;
+    console.log('CREATE URL REQ.USER:', req.user);
     const userId = req.user.id;
     console.log('CREATE URL USER ID:', userId);
 
