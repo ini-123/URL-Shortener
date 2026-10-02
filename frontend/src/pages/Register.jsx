@@ -1,7 +1,50 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Link as LinkIcon } from 'lucide-react'
+import { registerUser } from '../services/authService'
 
 function Register() {
+    const navigate = useNavigate()
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: '',
+        password: '',
+        confirmPassword: '',
+    })
+    const [error, setError] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
+    const handleChange = (event) => {
+        const { name, value } = event.target
+        setFormData((previous) => ({ ...previous, [name]: value,}))
+    }
+    const handleSubmit = async (event) => { event.preventDefault() 
+        setError('')
+        if (formData.password !== formData.confirmPassword) { setError('Passwords do not match.')
+            return
+        }
+        setIsLoading(true)
+        try {
+            await registerUser({
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                phoneNumber: formData.phoneNumber,
+                password: formData.password,
+            })
+            navigate('/login')
+        } catch (error) {
+            console.log('Registration error:', error.response?.data || error.message)
+            const message = error.response?.data?.message || 
+            error.response?.data?.errors?.[0]?.msg || 
+            error.message || 
+            'Registration failed. Please try again'
+            setError( typeof message === 'string'
+        ? message
+        : 'Registration failed. Please check your details.')
+        } finally { setIsLoading(false)}
+    }
    return (
      <div className="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-white">
          <div className="flex min-h-screen">
@@ -34,7 +77,8 @@ function Register() {
                   <div className="w-full max-w-md">
                       <Link
                           to="/"
-                          className="mb-8 inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-purple-600 dark:text-zinc-400 dark:hover:text-purple-400">
+                          className="mb-8 inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-purple-600 
+                          dark:text-zinc-400 dark:hover:text-purple-400">
                           <ArrowLeft size={18} />
                             Back to home
                       </Link>
@@ -42,19 +86,42 @@ function Register() {
                           <h2 className="text-3xl font-bold">Create your account</h2>
                           <p className="mt-2 text-zinc-600 dark:text-zinc-400">Join Linkly and start creating shorter links.</p>
                       </div>
-                      <form className="space-y-5">
-                           {/* Name */}
+                      <form  onSubmit={handleSubmit} className="space-y-5">
+                           {/* First Name */}
                            <div>
                               <label
-                                  htmlFor="name"
+                                  htmlFor="firstName"
                                   className="mb-2 block text-sm font-medium">
-                                    Full name
+                                    First name
                                </label>
                                <input
-                                   id="name"
+                                   id="firstName"
+                                   name="firstName"
                                    type="text"
-                                   placeholder="Your full name"
-                                   className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                                   value={formData.firstName}
+                                   onChange={handleChange}
+                                   placeholder="Your first name" required
+                                   className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition 
+                                   focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                               />
+                          </div>
+
+                          {/* Last Name */}
+                           <div>
+                              <label
+                                  htmlFor="lastName"
+                                  className="mb-2 block text-sm font-medium">
+                                    Last name
+                               </label>
+                               <input
+                                   id="lastName"
+                                   name="lastName"
+                                   type="text"
+                                   value={formData.lastName}
+                                   onChange={handleChange}
+                                   placeholder="Your last name" required
+                                   className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition 
+                                   focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                                />
                           </div>
 
@@ -67,10 +134,33 @@ function Register() {
                               </label>
                               <input
                                   id="email"
-                                  type="email"
-                                  placeholder="you@example.com"
-                                  className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                                  name="email"
+                                  type="text"
+                                  value={formData.email}
+                                  onChange={handleChange}
+                                  placeholder="you@example.com" required
+                                  className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition 
+                                  focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                                 />
+                          </div>
+
+                          {/* Phone Number */}
+                           <div>
+                              <label
+                                  htmlFor="phoneNumber"
+                                  className="mb-2 block text-sm font-medium">
+                                    Phone number
+                               </label>
+                               <input
+                                   id="phoneNumber"
+                                   name="phoneNumber"
+                                   type="tel"
+                                   value={formData.phoneNumber}
+                                   onChange={handleChange}
+                                   placeholder="Your phone number" required
+                                   className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition 
+                                   focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                               />
                           </div>
 
                           {/* Password */}
@@ -82,9 +172,13 @@ function Register() {
                               </label>
                               <input
                                   id="password"
+                                  name="password"
                                   type="password"
-                                  placeholder="Create a password"
-                                  className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                                  value={formData.password}
+                                  onChange={handleChange}
+                                  placeholder="Create a password" required
+                                  className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition 
+                                  focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                                />
                           </div>
 
@@ -97,15 +191,26 @@ function Register() {
                               </label>
                                <input
                                  id="confirmPassword"
+                                 name="confirmPassword"
                                  type="password"
-                                 placeholder="Confirm your password"
-                                 className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                                 value={formData.confirmPassword}
+                                 onChange={handleChange}
+                                 placeholder="Confirm your password" required
+                                 className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition 
+                                 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                                />
                            </div>
+
+                           {/* Error */}
+                           {error && (
+                            <p className="rounde-lg bg-red-50 px-4 py-3 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-400"> {error}</p>
+                           )}
                            <button
                              type="submit"
-                             className="w-full rounded-lg bg-purple-600 px-5 py-3 font-semibold text-white transition hover:bg-purple-700">
-                               Create account
+                             disabled={isLoading}
+                             className="w-full rounded-lg bg-purple-600 px-5 py-3 font-semibold text-white transition hover:bg-purple-700
+                             disabled:cursor-not-allowed disabled:opacity-60">
+                                {isLoading ? 'Creating account...' : 'Create account'}
                           </button>
                        </form>
                        <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">

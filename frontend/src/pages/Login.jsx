@@ -1,7 +1,53 @@
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Link as LinkIcon } from 'lucide-react'
+import { loginUser } from '../services/authService'
+import { useAuth } from '../Context/AuthContext'
 
 function Login() {
+    const navigate = useNavigate()
+    const { login } = useAuth()
+
+    const [formData, setFormData] = useState({
+       email: '',
+       password: '',
+    })
+    const [error, setError] = useState('')
+    const [loading, setLoading] = useState(false)
+
+    const handleChange = (e) => {
+       setFormData({
+         ...formData,
+         [e.target.id]: e.target.value,
+        })
+    }
+
+    const handleSubmit = async (e) => {
+       e.preventDefault()
+       setError('')
+       setLoading(true)
+
+       try {
+           const data = await loginUser(formData)
+           login(response.data.user)
+           localStorage.setItem('linklyToken', response.data.token)
+           navigate('/dashboard')
+        } catch (error) {
+           const message =
+            error.response?.data?.message ||
+            error.response?.data?.errors?.[0]?.msg ||
+            error.message ||
+            'Login failed. Please check your details.'
+
+            setError(
+               typeof message === 'string'
+                ? message
+                : 'Login failed. Please check your details.'
+            )
+        } finally {
+           setLoading(false)
+        }
+}
    return (
     <div className="min-h-screen bg-white text-zinc-900 dark:bg-black dark:text-white">
         <div className="flex min-h-screen">
@@ -45,7 +91,7 @@ function Login() {
                            Login to continue to your Linkly account.
                         </p>
                     </div>
-                   <form className="space-y-5">
+                   <form onSubmit={handleSubmit} className="space-y-5">
                        {/* Email */}
                         <div>
                            <label
@@ -56,8 +102,11 @@ function Login() {
                             <input
                               id="email"
                               type="email"
+                              value={formData.email}
+                              onChange={handleChange}
                               placeholder="you@example.com"
-                              className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                              className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 
+                              focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                             />
                             </div>
                             {/* Password */}
@@ -77,16 +126,23 @@ function Login() {
                                 <input
                                   id="password"
                                   type="password"
+                                  value={formData.password}
+                                  onChange={handleChange}
                                   placeholder="Enter your password"
-                                  className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
+                                  className="w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 outline-none transition focus:border-purple-500 
+                                  focus:ring-2 focus:ring-purple-500/20 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white"
                                 />
                             </div>
 
                            {/* Submit */}
+                           {error && (
+                              <p className="text-sm text-red-500"> {error}</p>
+                            )}
                            <button
                              type="submit"
+                             disabled={loading}
                              className="w-full rounded-lg bg-purple-600 px-5 py-3 font-semibold text-white transition hover:bg-purple-700">
-                              Login
+                              {loading ? 'Logging in...' : 'Login'}
                             </button>
                         </form>
                         <p className="mt-6 text-center text-sm text-zinc-600 dark:text-zinc-400">

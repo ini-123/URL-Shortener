@@ -1,7 +1,14 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import {BarChart3, Home, Link as LinkIcon, Settings, LogOut, X,} from 'lucide-react'
+import { useAuth } from '../Context/AuthContext'
 
 function Sidebar({ isOpen, onClose }) {
+    const navigate = useNavigate()
+    const { logout } = useAuth()
+    const handleLogout = () => {
+       logout()
+       navigate('/login')
+    }
     const navItems = [
         {
          name: 'Dashboard',
@@ -69,7 +76,9 @@ function Sidebar({ isOpen, onClose }) {
 
                {/* Bottom */}
                <div className="border-t border-zinc-200 p-4 dark:border-zinc-800">
-                  <button className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-red-500 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-red-400">
+                  <button onClick={handleLogout}
+                     className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 
+                     hover:text-red-500 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-red-400">
                      <LogOut size={20} />
                       Log out
                   </button>
