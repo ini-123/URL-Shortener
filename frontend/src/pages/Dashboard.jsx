@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Menu, Link as LinkIcon, Copy, MousePointerClick } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import UrlCard from '../components/UrlCard'
+import { createShortUrl } from '../services/urlServices'
 const sampleUrls = [
     {
       id: 1,
@@ -21,6 +22,16 @@ const sampleUrls = [
 
 function Dashboard() { 
     const [sidebarOpen, setSidebarOpen] = useState(false)
+    const [originalUrl, setOriginalUrl] = useState('')
+    const handleShortenUrl = async () => {
+       try {
+          const data = await createShortUrl(originalUrl)
+          console.log('SHORTENED URL RESPONSE:', data)
+        } catch (error) {
+            console.log('FULL ERROR RESPONSE:', error.response?.data)
+            console.error('FAILED TO SHORTEN URL:', error)
+        }
+    }
     return (
         <div className="min-h-screen bg-zinc-50 text-zinc-900 dark:bg-black dark:text-white">
             <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)}/>
@@ -57,11 +68,16 @@ function Dashboard() {
                         <div className="mt-5 flex flex-col gap-3 md:flex-row">
                             <input
                                 type="url"
+                                value={originalUrl}
+                                onChange={(e) => setOriginalUrl(e.target.value)}
                                 placeholder="Paste your long URL here..."
                                 className="min-w-0 flex-1 rounded-lg border-0 bg-white px-4 py-3 text-zinc-900 outline-none 
                                 placeholder:text-zinc-400 focus:ring-2 focus:ring-white/40"
                             />
-                            <button className="rounded-lg bg-black px-6 py-3 font-semibold text-white transition hover:bg-zinc-900">
+                            <button
+                              onClick={handleShortenUrl} 
+                                className="rounded-lg bg-black px-6 py-3 font-semibold text-white transition hover:bg-zinc-900"
+                            >
                                 Shorten URL
                             </button>
                         </div>

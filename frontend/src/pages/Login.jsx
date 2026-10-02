@@ -29,8 +29,8 @@ function Login() {
 
        try {
            const data = await loginUser(formData)
-           login(response.data.user)
-           localStorage.setItem('linklyToken', response.data.token)
+           login(data.data.user)
+           localStorage.setItem('linklyToken', data.data.token)
            navigate('/dashboard')
         } catch (error) {
            const message =
