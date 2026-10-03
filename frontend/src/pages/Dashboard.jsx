@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Menu, Link as LinkIcon, Copy, MousePointerClick } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import UrlCard from '../components/UrlCard'
-import { createShortUrl } from '../services/urlServices'
+import { createShortUrl, getMyUrls } from '../services/urlServices'
 const sampleUrls = [
     {
       id: 1,
@@ -23,6 +23,8 @@ const sampleUrls = [
 function Dashboard() { 
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [originalUrl, setOriginalUrl] = useState('')
+    const [urls, setUrls] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
     const handleShortenUrl = async () => {
        try {
           const data = await createShortUrl(originalUrl)
