@@ -12,6 +12,7 @@ const createUrl = async (req, res) => {
   try {
     const { originalUrl } = req.body;
     console.log('CREATE URL REQ.USER:', req.user);
+    console.log('CREATE URL REQ.USER.userId:', req.user.userId);
     const userId = req.user.id;
     console.log('CREATE URL USER ID:', userId);
 
