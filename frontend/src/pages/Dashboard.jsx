@@ -2,36 +2,52 @@ import { useEffect, useState } from 'react'
 import { Menu, Link as LinkIcon, Copy, MousePointerClick } from 'lucide-react'
 import Sidebar from '../components/Sidebar'
 import UrlCard from '../components/UrlCard'
-import { createShortUrl, getMyUrls } from '../services/urlServices'
-const sampleUrls = [
-    {
-      id: 1,
-      originalUrl: 'https://www.example.com/very-long-example-link',
-      shortUrl: 'linkly.com/Ab12x',
-      clicks: 124,
-      createdAt: 'Today',
-    },
-    {
-      id: 2,
-      originalUrl: 'https://www.example.com/my-important-project',
-      shortUrl: 'linkly.com/Xy45p',
-      clicks: 68,
-      createdAt: 'Yesterday',
-    },
-]
+import { createShortUrl, getMyUrls, deleteUrl } from '../services/urlServices'
 
 function Dashboard() { 
     const [sidebarOpen, setSidebarOpen] = useState(false)
     const [originalUrl, setOriginalUrl] = useState('')
     const [urls, setUrls] = useState([])
     const [isLoading, setIsLoading] = useState(true)
+    const [ error, setError ] = useState('')
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    useEffect(() => {
+       const loadUrls = async () => {
+          try {
+              const data = await getMyUrls()
+              console.log('MY URLS RESPONSE:', data)
+              setUrls(data.data)
+            } catch (error) {
+               console.error('FAILED TO LOAD URLS:', error)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+        loadUrls()
+    }, [])
     const handleShortenUrl = async () => {
+        if (!originalUrl.trim()) {
+           setError('Please enter a URL.')
+            return
+        }
+
        try {
-          const data = await createShortUrl(originalUrl)
-          console.log('SHORTENED URL RESPONSE:', data)
+          setError('')
+          setIsSubmitting(true)
+
+          await createShortUrl(originalUrl)
+
+          const data = await getMyUrls()
+          setUrls(data.data)
+
+          setOriginalUrl('')
         } catch (error) {
-            console.log('FULL ERROR RESPONSE:', error.response?.data)
-            console.error('FAILED TO SHORTEN URL:', error)
+           console.error('FAILED TO SHORTEN URL:', error)
+           setError(
+              error.response?.data?.message || 'Failed to shorten URL. Please try again.'
+            )
+        } finally {
+          setIsSubmitting(false)
         }
     }
     return (
@@ -67,21 +83,27 @@ function Dashboard() {
                             <LinkIcon size={24} />
                             <h2 className="text-xl font-semibold">Create a short link</h2>
                         </div>
-                        <div className="mt-5 flex flex-col gap-3 md:flex-row">
-                            <input
-                                type="url"
-                                value={originalUrl}
-                                onChange={(e) => setOriginalUrl(e.target.value)}
-                                placeholder="Paste your long URL here..."
-                                className="min-w-0 flex-1 rounded-lg border-0 bg-white px-4 py-3 text-zinc-900 outline-none 
-                                placeholder:text-zinc-400 focus:ring-2 focus:ring-white/40"
-                            />
-                            <button
-                              onClick={handleShortenUrl} 
-                                className="rounded-lg bg-black px-6 py-3 font-semibold text-white transition hover:bg-zinc-900"
-                            >
-                                Shorten URL
-                            </button>
+                        <div className="mt-5">
+                            <div className= "flex flex-col gap-3 md:flex-row">
+                                <input
+                                    type="url"
+                                    value={originalUrl}
+                                    onChange={(e) => setOriginalUrl(e.target.value)}
+                                    placeholder="Paste your long URL here..."
+                                    className="min-w-0 flex-1 rounded-lg border-0 bg-white px-4 py-3 text-zinc-900 outline-none 
+                                    placeholder:text-zinc-400 focus:ring-2 focus:ring-white/40"
+                               />
+                               <button
+                                  onClick={handleShortenUrl} 
+                                  disabled={isSubmitting}
+                                  className="rounded-lg bg-black px-6 py-3 font-semibold text-white transition hover:bg-zinc-900"
+                                  >
+                                   {isSubmitting ? 'Shortening...' : 'Shorten URL'}
+                                </button>
+                                {error && (
+                                  <p className="mt-2 text-sm text-white">{error}</p>
+                                )}
+                            </div>
                         </div>
                     </section>
 
@@ -94,7 +116,7 @@ function Dashboard() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400">Total Links</p>
-                                    <p className="mt-1 text-2xl font-bold">12</p>
+                                <p className="mt-1 text-2xl font-bold">{urls.length}</p>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +127,7 @@ function Dashboard() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400">Total Clicks</p>
-                                    <p className="mt-1 text-2xl font-bold">1,248</p>
+                                    <p className="mt-1 text-2xl font-bold">{urls.reduce((total, url) => total + url.clicks.length, 0)}</p>
                                 </div>
                             </div>
                         </div>
@@ -116,7 +138,7 @@ function Dashboard() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-zinc-500 dark:text-zinc-400">Recent Links</p>
-                                    <p className="mt-1 text-2xl font-bold">5</p>
+                                    <p className="mt-1 text-2xl font-bold">{urls.length}</p>
                                 </div>
                             </div>
                         </div>
@@ -130,7 +152,26 @@ function Dashboard() {
                                 <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Manage your shortened URLs.</p>
                             </div>
                         </div>
-                        <div className="space-y-4"> {sampleUrls.map((url) => ( <UrlCard key={url.id} url={url} /> ))} </div>
+                        <div className="space-y-4">
+                            {isLoading ? (
+                               <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading your links...</p>
+                            ) : urls.length === 0 ? (
+                                <div className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center dark:border-zinc-700 dark:bg-zinc-950">
+                                    <p className="font-medium">You haven't created any links yet.</p>
+                                    <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Create your first short link above.</p>
+                                </div>
+                            ) : (
+                                urls.map((url) => (
+                                    <UrlCard
+                                        key={url._id}
+                                        url={url}
+                                        onDelete={() =>
+                                            setUrls(urls.filter((item) => item._id !== url._id))
+                                        }
+                                    />
+                                ))
+                            )}
+                       </div>
                     </section>
                 </div>
             </main>

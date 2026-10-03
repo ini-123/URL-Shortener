@@ -9,3 +9,11 @@ export async function loginUser(credentials) {
     return response.data
 
 }
+export async function forgotPassword(email) {
+    const response = await axios.post(`${API_BASE_URL}/forgot-password`, { email })
+    return response.data
+}
+export async function resetPassword(token, password) {
+    const response = await axios.post(`${API_BASE_URL}/reset-password/${token}`, { password })
+    return response.data
+}

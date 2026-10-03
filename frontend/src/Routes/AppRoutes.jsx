@@ -5,6 +5,9 @@ import Register from '../pages/Register'
 import Dashboard from '../pages/Dashboard'
 import Settings from '../pages/Settings'
 import ProtectedRoute from '../Routes/ProtectedRoute'
+import ForgotPassword from '../pages/ForgotPassword'
+import ResetPassword from '../pages/ResetPassword'
+import Statistics from '../pages/Statistics'
 
 
 function Home() {
@@ -35,9 +38,12 @@ function AppRoutes() {
         <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route path="/register" element={<Register />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/statistics" element={<Statistics />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
         </Routes>

@@ -29,6 +29,7 @@ function Login() {
 
        try {
            const data = await loginUser(formData)
+           console.log('LOGIN RESPONSE:', data)
            login(data.data.user)
            localStorage.setItem('linklyToken', data.data.token)
            navigate('/dashboard')
@@ -117,11 +118,12 @@ function Login() {
                                      className="text-sm font-medium">
                                       Password
                                     </label>
-                                  <button
-                                      type="button"
-                                      className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400">
-                                      Forgot password?
-                                    </button>
+                                  <Link
+                                      to="/forgot-password"
+                                      className="text-sm text-purple-600 hover:text-purple-700 dark:text-purple-400"
+                                       >
+                                     Forgot password?
+                                  </Link>
                                 </div>
                                 <input
                                   id="password"
