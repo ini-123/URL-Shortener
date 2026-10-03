@@ -13,7 +13,7 @@ const createUrl = async (req, res) => {
     const { originalUrl } = req.body;
     console.log('CREATE URL REQ.USER:', req.user);
     console.log('CREATE URL REQ.USER.userId:', req.user.userId);
-    const userId = req.user.id;
+    const userId = req.user.userId;
     console.log('CREATE URL USER ID:', userId);
 
     const newUrl = await createShortUrl(originalUrl, userId);
