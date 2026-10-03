@@ -11,10 +11,8 @@ const { successResponse, errorResponse } = require('../utils/response');
 const createUrl = async (req, res) => {
   try {
     const { originalUrl } = req.body;
-    console.log('CREATE URL REQ.USER:', req.user);
-    console.log('CREATE URL REQ.USER.userId:', req.user.userId);
     const userId = req.user.userId;
-    console.log('CREATE URL USER ID:', userId);
+    
 
     const newUrl = await createShortUrl(originalUrl, userId);
 
@@ -33,7 +31,7 @@ const createUrl = async (req, res) => {
 
 const getMyUrls = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const urls = await getUserUrls(userId);
 
     return successResponse(res, 200, 'URLs retrieved successfully', urls);
@@ -59,7 +57,7 @@ const redirectToOriginal = async (req, res) => {
 const getStats = async (req, res) => {
   try {
     const { shortCode } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const stats = await getUrlStats(shortCode, userId);
 
@@ -81,7 +79,7 @@ const getStats = async (req, res) => {
 const removeUrl = async (req, res) => {
   try {
     const { shortCode } = req.params;
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     await deleteUrl(shortCode, userId);
 
