@@ -5,6 +5,7 @@ const createUrlValidation = [
     .trim()
     .notEmpty()
     .withMessage('Original URL is required')
+    .bail()
     .isURL({
       protocols: ['http', 'https'],
       require_protocol: true
