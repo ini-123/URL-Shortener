@@ -1,23 +1,52 @@
-const express = require('express');
+const express = require("express");
+
+const {
+    register,
+    login,
+    forgotPassword,
+    resetPassword
+} = require("../controllers/authController");
+
+const {
+    registerValidation,
+    loginValidation,
+    forgotPasswordValidation,
+    resetPasswordValidation
+} = require("../validations/authValidation");
+
 const router = express.Router();
 
-const { protect } = require('../middlewares/authMiddleware');
-const validate = require('../middlewares/validateMiddleware');
 
-const {createUrlValidation, shortCodeValidation} = require('../validations/urlValidation');
-const {createUrl, getMyUrls, getStats, removeUrl} = require('../controllers/urlController');
+// Register
+router.post(
+    "/register",
+    registerValidation,
+    register
+);
 
 
-// Create a new shortened URL
-router.post('/create', protect, createUrlValidation, validate, createUrl);
+// Login
+router.post(
+    "/login",
+    loginValidation,
+    login
+);
 
-// Get all URLs belonging to the logged-in user
-router.get('/my-urls', protect, getMyUrls);
 
-// Get click statistics for a specific URL (owner only)
-router.get('/:shortCode/stats', protect, shortCodeValidation, validate, getStats);
+// Forgot password
+router.post(
+    "/forgot-password",
+    forgotPasswordValidation,
+    forgotPassword
+);
 
-// Delete a URL (owner only)
-router.delete( '/:shortCode/delete', protect, shortCodeValidation, validate, removeUrl);
+
+// Reset password
+router.post(
+    "/reset-password/:token",
+    resetPasswordValidation,
+    resetPassword
+);
+
 
 module.exports = router;
