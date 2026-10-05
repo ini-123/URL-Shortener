@@ -1,5 +1,5 @@
 import { Check, Moon, Monitor, Sun } from 'lucide-react'
-import { useTheme } from '../context/ThemeContext'
+import { useTheme } from '../Context/ThemeContext'
 const themeOptions = [
    {
      value: 'light',
