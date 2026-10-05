@@ -18,7 +18,7 @@ function Navbar() {
                 <div className="hidden items-center gap-8 md:flex">
                     <Link
                       to="/"
-                      className="text-sm font-medium text-zinc-700 transition hover:text-purole-600 dark:text-zinc-300 dark:hover:text-purple-400">
+                      className="text-sm font-medium text-zinc-700 transition hover:text-purle-600 dark:text-zinc-300 dark:hover:text-purple-400">
                         Home
                     </Link>
 
@@ -36,7 +36,7 @@ function Navbar() {
                 </div>
                 {/* Mobile Menu Button */}
                 <button
-                   onclick={() => setIsMenuOpen(!isMenuOpen)}
+                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                    className="rounded-lg p-2 text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900 md:hidden"
                    aria-label="toggle navigation menu">
                     {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
