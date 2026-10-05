@@ -1,6 +1,6 @@
 import { Check, Moon, Monitor, Sun } from 'lucide-react'
-import { useTheme } from '../Context/ThemeContext'
 import Sidebar from '../components/Sidebar'
+import { useTheme } from '../Context/ThemeContext'
 const themeOptions = [
    {
      value: 'light',
