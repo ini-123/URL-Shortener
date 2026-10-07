@@ -88,64 +88,55 @@ url-shortener/
 │   ├── .env
 │   │
 │   ├── public/
-│   │   └── favicon.ico
+│   │   ├── favicon.svg
+│   │   └── icons.svg
 │   │
 │   └── src/
 │       ├── main.jsx
 │       ├── App.jsx
-│       ├── index.css
+│       ├── App.css
+│       └── index.css
+│       │
+│       ├── Context/
+│       │   ├── AuthContext.jsx
+│       │   └── ThemeContext.jsx
+│       │
+│       ├── Routes/
+│       │   ├── AppRoutes.jsx
+│       │   └── ProtectedRoute.jsx
 │       │
 │       ├── assets/
-│       │   ├── logo.svg
-│       │   └── illustrations/
-│       │       ├── hero.svg
-│       │       ├── login.svg
-│       │       └── not-found.svg
+│       │   ├── DELETE.js
+│       │   ├── hero.png
+│       │   ├── react.svg
+│       │   └── vite.svg
 │       │
 │       ├── components/
-│       │   ├── Navbar.jsx
-│       │   ├── Footer.jsx
-│       │   ├── Sidebar.jsx
-│       │   ├── Button.jsx
-│       │   ├── Input.jsx
+│       │   ├── DELETE.js
 │       │   ├── LoadingSpinner.jsx
-│       │   ├── ErrorMessage.jsx
-│       │   ├── SuccessMessage.jsx
-│       │   ├── ProtectedRoute.jsx
-│       │   ├── StatsCard.jsx
-│       │   ├── UrlCard.jsx
-│       │   ├── UrlTable.jsx
-│       │   ├── SearchBar.jsx
-│       │   ├── Pagination.jsx
-│       │   └── EmptyState.jsx
-│       │
-│       ├── pages/
-│       │   ├── Landing.jsx
-│       │   ├── About.jsx
-│       │   ├── Login.jsx
-│       │   ├── Register.jsx
-│       │   ├── Dashboard.jsx
-│       │   ├── CreateLink.jsx
-│       │   ├── MyLinks.jsx
-│       │   ├── LinkStats.jsx
-│       │   └── NotFound.jsx
-│       │
-│       ├── services/
-│       │   ├── api.js
-│       │   ├── authService.js
-│       │   └── urlService.js
+│       │   ├── Navbar.jsx
+│       │   ├── Sidebar.jsx
+│       │   └── UrlCard.jsx
 │       │
 │       ├── context/
-│       │   └── AuthContext.jsx
+│       │   └── DELETE.js
 │       │
-│       ├── hooks/
-│       │   ├── useAuth.js
-│       │   └── useFetch.js
+│       ├── pages/
+│       │   ├── Dashboard.jsx
+│       │   ├── ForgotPassword.jsx
+│       │   ├── Login.jsx
+│       │   ├── Register.jsx
+│       │   ├── ResetPassword.jsx
+│       │   ├── Settings.jsx
+│       │   └── Statistics.jsx
 │       │
-│       └── utils/
-│           ├── formatDate.js
-│           ├── copyToClipboard.js
-│           └── validation.js
+│       ├── routes/
+│       │   └── DELETE.js
+│       │
+│       └── services/
+│           ├── DELETE.js
+│           ├── authService.js
+│           └── urlServices.js
 │
 └── docs/
     ├── API.md
