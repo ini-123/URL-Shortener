@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { validationResult } = require('express-validator');
 const { successResponse, errorResponse } = require('../utils/response');
+const { Resend } = require('resend');
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Registers a new user
 exports.register = async (req, res) => {
@@ -182,9 +184,40 @@ exports.forgotPassword = async (req, res) => {
         const resetLink =
             `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
 
-        // Display the link in the terminal for testing
-        // This will later be replaced with an email service
-        console.log('Password reset link:', resetLink);
+        
+        // Send the password reset email
+        const { data, error } = await resend.emails.send({
+            from: process.env.EMAIL_FROM,
+            to: user.email,
+            subject: 'Reset Your Hajime 16 Password',
+            html: `
+                <div style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h2>Password Reset Request</h2>
+
+                    <p>Hello ${user.firstName},</p>
+
+                    <p>You requested to reset your Hajime 16 password.</p>
+
+                    <p>Click the button below to reset your password:</p>
+
+                    <a href="${resetLink}"
+                    style="display: inline-block; padding: 12px 20px; background-color: #2563eb; color: white; text-decoration: none; border-radius: 5px;">
+                        Reset Password
+                    </a>
+
+                    <p>This link expires in 15 minutes.</p>
+
+                    <p>If you did not request this, please ignore this email.</p>
+                </div>
+            `
+        });
+
+        // Check whether Resend returned an error
+        if (error) {
+            console.error('Resend email error:', error);
+
+            return errorResponse(res, 500, 'Unable to send password reset email');
+        }
 
         return successResponse(res, 200, 'If an account exists with this email, a password reset link will be sent');
 
